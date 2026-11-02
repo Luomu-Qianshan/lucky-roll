@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>LUCKY DROP 5.0</title>
+<style>
+:root{
+  --bg:#0d1420;
+  --panel:#162033;
+  --panel2:#1c2a40;
+  --ink:#edf2f8;
+  --muted:#9aa8bc;
+  --gold:#e7bd68;
+  --line:#2c3c55;
+  --n:#9aa8bc;
+  --r:#6eb1ff;
+  --sr:#c59bff;
+  --ssr:#f0c14a;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:radial-gradient(circle at 50% -20%,#1e2d45,#0d1420 55%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;min-height:100%}
+body{padding-bottom:calc(18px + var(--safe-bottom))}
+main{max-width:980px;margin:0 auto;padding:14px 12px 36px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.brand{letter-spacing:.14em;color:var(--gold);font-size:11px;font-weight:600}
+h1{font-size:22px;margin:5px 0 0}
+.sub{color:var(--muted);font-size:12px;margin-top:3px}
+.tag{font-size:11px;border:1px solid var(--line);padding:4px 9px;border-radius:99px;color:var(--muted);white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:14px 0}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+.stat,.panel{background:linear-gradient(155deg,var(--panel),#121c2d);border:1px solid var(--line);border-radius:14px;padding:12px 13px;box-shadow:0 10px 28px #0003}
+.stat small{display:block;color:var(--muted);font-size:11px}
+.num{font-size:22px;font-weight:750;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1.15}
+.unit{font-size:11px;color:var(--muted);margin-left:2px;font-weight:500}
+.progress{height:7px;background:#0a121e;border-radius:99px;overflow:hidden;margin-top:7px}
+.bar{height:100%;width:0%;border-radius:99px;transition:width .35s ease}
+.bar.ssr{background:linear-gradient(90deg,#b8923a,var(--ssr))}
+.bar.sr{background:linear-gradient(90deg,#7a5fb0,var(--sr))}
+.bar.r{background:linear-gradient(90deg,#3d7ec4,var(--r))}
+.layout{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:820px){.layout{grid-template-columns:1.05fr .95fr}}
+.panel h2{font-size:14px;margin:0 0 10px;font-weight:700}
+.panel p{color:var(--muted);font-size:12px;line-height:1.55;margin:6px 0}
+button{border:0;border-radius:11px;padding:12px 14px;background:var(--panel2);color:var(--ink);font-weight:650;cursor:pointer;font-size:13px;min-height:44px;transition:filter .15s,transform .1s;-webkit-user-select:none;user-select:none}
+button:active{transform:scale(.97)}
+button:hover{filter:brightness(1.1)}
+button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.primary{background:linear-gradient(135deg,#f1d18a,#c18b3f);color:#182234}
+.secondary{background:linear-gradient(135deg,#7aa2d4,#4a6fa5);color:#fff}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.rollarea{text-align:center;padding:4px 0}
+.orb{width:148px;height:148px;border-radius:50%;margin:4px auto 12px;background:radial-gradient(circle at 35% 28%,#fff4cb,#e6b95e 34%,#8d5c24 72%,#362719);box-shadow:0 0 0 7px #e6bd6820,0 0 36px #e4b95a44,inset 0 0 18px #fff8;display:flex;align-items:center;justify-content:center;color:#342719;font-size:22px;font-weight:900;letter-spacing:.06em}
+.orb.spin{animation:pulse .4s ease-in-out 2}
+@keyframes pulse{50%{transform:scale(1.07);filter:brightness(1.25)}}
+.result{min-height:44px;font-size:16px;font-weight:750;margin:6px 0 10px;line-height:1.35;padding:0 4px}
+.result.N{color:var(--n)}.result.R{color:var(--r)}.result.SR{color:var(--sr)}.result.SSR{color:var(--ssr)}
+.buttons{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.buttons button{min-width:110px;flex:1;max-width:150px}
+label{display:block;color:var(--muted);font-size:11px;margin:8px 0 4px;font-weight:500}
+input,select,textarea{width:100%;background:#0d1624;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit;font-size:14px;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%239aa8bc' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.row>*{flex:1;min-width:110px}
+.log{max-height:220px;overflow:auto;-webkit-overflow-scrolling:touch}
+.entry{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #ffffff0d;padding:9px 0;font-size:12px;align-items:flex-start}
+.entry:last-child{border:0}
+.tools{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.tools button{font-size:12px;padding:10px 12px;min-height:40px}
+.foot{color:var(--muted);font-size:10px;text-align:center;margin:20px 0 6px;line-height:1.5}
+.notice{background:#1a2638;border-left:3px solid var(--gold);padding:9px 11px;border-radius:8px;color:#d5deea;font-size:11px;line-height:1.55;margin-top:10px}
+.achievements{display:grid;grid-template-columns:1fr;gap:8px;margin-top:6px}
+@media(min-width:480px){.achievements{grid-template-columns:repeat(3,1fr)}}
+.ach{background:#0d1624;border:1px solid var(--line);border-radius:11px;padding:11px;text-align:center}
+.ach.unlocked{border-color:#c9a04a;background:linear-gradient(160deg,#2a2214,#162033)}
+.ach .icon{font-size:18px;margin-bottom:3px;opacity:.35}
+.ach.unlocked .icon{opacity:1}
+.ach .title{font-size:12px;font-weight:700}
+.ach .desc{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.35}
+.ach .status{font-size:10px;margin-top:5px;color:var(--muted)}
+.ach.unlocked .status{color:var(--gold)}
+.reward-btn{margin-top:6px;width:100%;min-height:36px;font-size:12px;padding:8px}
+.reward-btn:disabled{opacity:.45}
+.pity-row{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+@media(min-width:520px){.pity-row{grid-template-columns:repeat(3,1fr)}}
+.pity-card{background:#0d1624;border:1px solid var(--line);border-radius:10px;padding:10px}
+.pity-card small{color:var(--muted);font-size:10px}
+.pity-card .v{font-size:15px;font-weight:700;margin-top:2px}
+.ten-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0;min-height:0}
+.ten-card{aspect-ratio:1;border-radius:10px;background:#0d1624;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;opacity:0;transform:scale(.85);transition:all .25s ease}
+.ten-card.show{opacity:1;transform:scale(1)}
+.ten-card.N{color:var(--n);border-color:#4a5568}
+.ten-card.R{color:var(--r);border-color:#3d7ec4;box-shadow:0 0 12px #6eb1ff33}
+.ten-card.SR{color:var(--sr);border-color:#8b6bc4;box-shadow:0 0 14px #c59bff44}
+.ten-card.SSR{color:var(--ssr);border-color:#c9a04a;box-shadow:0 0 16px #f0c14a55}
+#toast{position:fixed;left:50%;bottom:calc(24px + var(--safe-bottom));transform:translateX(-50%) translateY(16px);opacity:0;background:#1a273c;color:var(--ink);border:1px solid var(--line);padding:11px 16px;border-radius:11px;font-size:13px;font-weight:600;z-index:99;pointer-events:none;transition:all .25s ease;max-width:90%;text-align:center;box-shadow:0 8px 24px #0006}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;font-size:12px;color:var(--muted)}
+.switch{position:relative;width:42px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#2a384c;border-radius:99px;cursor:pointer;transition:.2s}
+.slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:#c9a04a}
+.switch input:checked+.slider:before{transform:translateX(18px)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <div>
+      <div class="brand">PERSONAL PROGRESS REWARD SYSTEM</div>
+      <h1>LUCKY DROP 5.0</h1>
+      <div class="sub">每一点进步，都值得一次抽取。</div>
+    </div>
+    <div class="tag" id="periodLabel">本期活动</div>
+  </div>
+
+  <section class="grid">
+    <div class="stat"><small>可用抽数</small><div class="num" id="balance">0<span class="unit">抽</span></div></div>
+    <div class="stat"><small>本期幸运值</small><div class="num" id="luck">0<span class="unit">/ 10</span></div></div>
+    <div class="stat"><small>SSR 长期保底</small><div class="num" id="ssr">0<span class="unit">/ 200</span></div><div class="progress"><div class="bar ssr" id="ssrBar"></div></div></div>
+    <div class="stat"><small>免费 R+ 次数</small><div class="num" id="freeR">0<span class="unit">次</span></div></div>
+  </section>
+
+  <div class="pity-row">
+    <div class="pity-card">
+      <small>R 保底（10抽）</small>
+      <div class="v" id="rPityText">0 / 10</div>
+      <div class="progress"><div class="bar r" id="rBar"></div></div>
+    </div>
+    <div class="pity-card">
+      <small>SR 保底（50抽）</small>
+      <div class="v" id="srPityText">0 / 50</div>
+      <div class="progress"><div class="bar sr" id="srBar"></div></div>
+    </div>
+    <div class="pity-card">
+      <small>SSR 保底（200抽）</small>
+      <div class="v" id="ssrPityText">0 / 200</div>
+      <div class="progress"><div class="bar ssr" id="ssrBar2"></div></div>
+    </div>
+  </div>
+
+  <div class="layout" style="margin-top:12px">
+    <section class="panel">
+      <h2>✦ 随机抽取</h2>
+      <div class="rollarea">
+        <div class="orb" id="orb">LUCKY</div>
+        <div class="result" id="result">等待你的下一次抽取</div>
+        <div class="ten-grid hidden" id="tenGrid"></div>
+        <div class="buttons">
+          <button class="primary" id="rollOne">ROLL × 1</button>
+          <button id="rollTen">ROLL × 10</button>
+        </div>
+        <div class="buttons" style="margin-top:8px">
+          <button class="secondary" id="rollFreeR" disabled>免费 R+ 抽取</button>
+        </div>
+        <p style="margin-top:10px;font-size:11px">普通抽消耗 1 抽并计入保底。免费 R+ 不消耗抽数、不计入任何保底。</p>
+      </div>
+      <div class="notice">
+        R：连续 9 抽无 R/SR/SSR → 第 10 抽必出 R+。<br>
+        SR：41–49 抽概率提升，第 50 抽必出 SR/SSR。<br>
+        SSR：基础 0.3%，151 起软保底，200 硬保底（跨月保留）。
+      </div>
+      <div class="switch-row">
+        <span>震动反馈</span>
+        <label class="switch"><input type="checkbox" id="vibToggle" checked><span class="slider"></span></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>＋ 记录一次进步</h2>
+      <label for="actionText">做了什么？</label>
+      <input id="actionText" placeholder="例如：英语阅读 15 分钟" autocomplete="off">
+      <div class="row">
+        <div>
+          <label for="actionTier">行动等级 / 抽数</label>
+          <select id="actionTier">
+            <option value="1">微小进步 · +1 抽</option>
+            <option value="2">有效行动 · +2 抽</option>
+            <option value="3">阶段突破 · +3 抽</option>
+            <option value="4">重要突破 · +4 抽</option>
+            <option value="5">重大阶段目标 · +5 抽</option>
+          </select>
+        </div>
+        <div>
+          <label for="luckAdd">额外幸运值</label>
+          <select id="luckAdd">
+            <option value="0">不增加</option>
+            <option value="1">+1 点</option>
+            <option value="2">+2 点</option>
+            <option value="3">+3 点</option>
+          </select>
+        </div>
+      </div>
+      <div class="notice">抽数奖励有效进步；幸运值仅在特别优秀时额外记录。每日最多 +3，每期最多 10 点。</div>
+      <div class="tools"><button class="primary" id="addAction" style="flex:1">确认记录并领取抽数</button></div>
+      <h2 style="margin-top:18px">本期行动记录</h2>
+      <div class="log" id="actionLog"><p style="color:var(--muted);margin:0">还没有记录。</p></div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:12px">
+    <h2>✦ 幸运值成就奖励</h2>
+    <p>幸运值不影响普通抽奖概率。奖励每期各可领一次，领取后不扣幸运值。</p>
+    <div class="achievements">
+      <div class="ach" id="ach3">
+        <div class="icon">✦</div>
+        <div class="title">初露锋芒 · 3点</div>
+        <div class="desc">获得 1 次免费 R+ 抽取</div>
+        <div class="status" id="ach3Status">未解锁</div>
+        <button class="reward-btn secondary hidden" id="claim3">领取免费 R+</button>
+      </div>
+      <div class="ach" id="ach6">
+        <div class="icon">◆</div>
+        <div class="title">稳步前行 · 6点</div>
+        <div class="desc">再获得 1 次免费 R+ 抽取</div>
+        <div class="status" id="ach6Status">未解锁</div>
+        <button class="reward-btn secondary hidden" id="claim6">领取免费 R+</button>
+      </div>
+      <div class="ach" id="ach10">
+        <div class="icon">★</div>
+        <div class="title">本月高光 · 10点</div>
+        <div class="desc">自选一件 SR 奖励</div>
+        <div class="status" id="ach10Status">未解锁</div>
+        <div id="srPickWrap" class="hidden" style="margin-top:6px">
+          <select id="srPick"></select>
+          <button class="reward-btn primary" id="claim10" style="margin-top:6px">领取自选 SR</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:12px">
+    <h2>奖励池设置</h2>
+    <p>每行格式：品质|奖励名称。品质用 N / R / SR / SSR。抽中时从对应品质中随机选取。可随时自行增删。</p>
+    <textarea id="rewardEditor" rows="8" placeholder="N|贴纸一枚&#10;R|一杯喜欢的饮料&#10;SR|一本想看的实体书&#10;SSR|心愿清单中的实物"></textarea>
+    <div class="tools">
+      <button id="saveRewards">保存奖励池</button>
+      <button id="restoreRewards">恢复示例奖励池</button>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top:12px">
+    <div class="row" style="align-items:center;margin-bottom:6px">
+      <h2 style="margin:0;flex:1">最近抽取记录</h2>
+      <span class="tag" id="drawCount">0 次</span>
+    </div>
+    <div class="log" id="drawLog"><p style="color:var(--muted);margin:0">还没有抽取记录。</p></div>
+    <div class="tools">
+      <button id="exportData">导出备份 JSON</button>
+      <button id="exportCsv">导出抽取 CSV</button>
+      <button id="importData">导入备份 JSON</button>
+      <button id="settle">结算并开启新周期</button>
+      <button id="resetAll">清空全部数据</button>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+    <p style="margin-top:10px">数据保存在当前浏览器。换设备或清缓存前请先导出备份。</p>
+  </section>
+
+  <div class="foot">LUCKY DROP 5.0 · R保底10 · SR保底50（41起软） · SSR保底200跨月<br>幸运值成就独立奖励 · 奖励池可自行编辑</div>
+</main>
+<div id="toast"></div>
+
+<script>
+const KEY = 'lucky_drop_5_0_state_v1';
+const R_PITY_MAX = 10;
+const SR_PITY_MAX = 50;
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function formatLocal(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+const today = () => formatLocal(new Date());
+function addDays(date, n){
+  const d = new Date(date+'T12:00:00'); d.setDate(d.getDate()+n); return formatLocal(d);
+}
+function getMonthPeriod(baseDate){
+  const now = baseDate ? new Date(baseDate+'T12:00:00') : new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  return { periodStart: formatLocal(new Date(y,m,1)), periodEnd: formatLocal(new Date(y,m+1,0)) };
+}
+
+const defaultRewards = [
+  {tier:'N', name:'无糖口香糖 / 木糖醇薄荷糖'},
+  {tier:'N', name:'可爱贴纸一枚'},
+  {tier:'N', name:'好看的中性笔 / 笔芯'},
+  {tier:'N', name:'五分钟自由发呆'},
+  {tier:'N', name:'一次伸展身体休息'},
+  {tier:'R', name:'一杯奶茶 / 饮料'},
+  {tier:'R', name:'一包薯片 / 小零食'},
+  {tier:'R', name:'一小时自由支配时间'},
+  {tier:'SR', name:'一本实体书 / 漫画'},
+  {tier:'SR', name:'游戏周边小物'},
+  {tier:'SR', name:'精致文具套装'},
+  {tier:'SSR', name:'想买的游戏礼包'},
+  {tier:'SSR', name:'想买的游戏周边 / 手办'}
+];
+
+const initial = () => {
+  const p = getMonthPeriod();
+  return {
+    version: 1,
+    periodStart: p.periodStart,
+    periodEnd: p.periodEnd,
+    balance: 0,
+    luck: 0,
+    luckByDay: {},
+    rPity: 0,
+    srPity: 0,
+    ssrPity: 0,
+    freeRPlus: 0,
+    claimed: { c3:false, c6:false, c10:false },
+    actions: [],
+    draws: [],
+    archives: [],
+    rewards: defaultRewards.slice(),
+    settings: { vibrate: true }
+  };
+};
+
+let state;
+try {
+  const raw = JSON.parse(localStorage.getItem(KEY));
+  state = (raw && raw.version === 1) ? raw : initial();
+  if (!state.claimed) state.claimed = { c3:false, c6:false, c10:false };
+  if (!state.settings) state.settings = { vibrate: true };
+  if (state.freeRPlus == null) state.freeRPlus = 0;
+  if (state.rPity == null) state.rPity = 0;
+} catch(e){ state = initial(); }
+
+function ensureCurrentPeriod(){
+  const now = today();
+  const cur = getMonthPeriod();
+  if (state.periodEnd && now > state.periodEnd){
+    state.archives = state.archives || [];
+    state.archives.push({
+      start: state.periodStart, end: state.periodEnd,
+      balance: state.balance, luck: state.luck,
+      rPity: state.rPity, srPity: state.srPity, ssrPity: state.ssrPity,
+      actions: state.actions, draws: state.draws,
+      claimed: {...state.claimed}, freeRPlus: state.freeRPlus, autoSettled: true
+    });
+    state.balance = 0; state.luck = 0; state.luckByDay = {};
+    state.rPity = 0; state.srPity = 0;
+    state.freeRPlus = 0;
+    state.actions = []; state.draws = [];
+    state.claimed = { c3:false, c6:false, c10:false };
+    state.periodStart = cur.periodStart; state.periodEnd = cur.periodEnd;
+    return true;
+  }
+  if (!state.periodStart || !state.periodEnd){
+    state.periodStart = cur.periodStart; state.periodEnd = cur.periodEnd;
+  } else if (!state.actions?.length && !state.draws?.length && state.balance===0 && state.luck===0){
+    if (state.periodStart !== cur.periodStart){
+      state.periodStart = cur.periodStart; state.periodEnd = cur.periodEnd;
+    }
+  }
+  return false;
+}
+
+let autoSettledOnLoad = false;
+try { autoSettledOnLoad = ensureCurrentPeriod(); if(autoSettledOnLoad) localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(window.__tt); window.__tt = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function vibrate(pattern){
+  if (!state.settings?.vibrate) return;
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e){}
+}
+
+function ssrProb(next){
+  if (next <= 150) return 0.003;
+  const nodes = [[150,.003],[151,.004],[160,.008],[170,.015],[180,.03],[185,.05],[190,.10],[195,.20],[199,.50],[200,1]];
+  if (next >= 200) return 1;
+  for (let i=1;i<nodes.length;i++){
+    const [x1,y1]=nodes[i-1],[x2,y2]=nodes[i];
+    if (next <= x2) return y1 + (y2-y1)*(next-x1)/(x2-x1);
+  }
+  return 1;
+}
+
+function srProb(next){
+  // next = srPity+1 after this pull
+  if (next >= 50) return 1;
+  if (next <= 40) return 0.005;
+  // 41-49 soft ramp toward hard pity feel
+  const t = (next - 40) / 10; // 0.1 .. 0.9
+  return 0.005 + t * 0.15; // up to ~14% near 49
+}
+
+function pickReward(tier){
+  const pool = (state.rewards||defaultRewards).filter(x=>x.tier===tier).map(x=>x.name);
+  if (!pool.length) return '请添加 '+tier+' 级奖励';
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function doOne(opts={}){
+  // opts.freeRPlus: 保证 R+，不耗抽数，不计入任何保底
+  if (opts.freeRPlus){
+    if (state.freeRPlus < 1 && opts.consumeFree !== false) {
+      // 调用方已扣减也可
+    }
+    const rnd = Math.random();
+    let tier;
+    if (rnd < 0.03) tier = 'SSR';
+    else if (rnd < 0.18) tier = 'SR';
+    else tier = 'R';
+    const reward = pickReward(tier);
+    const record = {
+      date: today(), tier, reward, free: true,
+      ssrAfter: state.ssrPity, srAfter: state.srPity, rAfter: state.rPity,
+      number: state.draws.length + 1
+    };
+    state.draws.unshift(record);
+    return record;
+  }
+
+  if (state.balance < 1) return null;
+  state.balance--;
+
+  const nextSsr = state.ssrPity + 1;
+  const nextSr = state.srPity + 1;
+  const nextR = state.rPity + 1;
+  const pSsr = ssrProb(nextSsr);
+  const pSr = srProb(nextSr); // 含软保底
+  const forceSsr = nextSsr >= 200;
+  const forceSr = nextSr >= SR_PITY_MAX;
+  const forceR = nextR >= R_PITY_MAX;
+
+  let tier;
+  const rnd = Math.random();
+
+  if (forceSsr || rnd < pSsr){
+    tier = 'SSR';
+  } else if (forceSr){
+    tier = 'SR';
+  } else {
+    // 在非强制情况下，按 SR 概率再判，否则判 R/N
+    // 用独立随机避免与 SSR 随机耦合偏差过大
+    const rnd2 = Math.random();
+    if (rnd2 < pSr){
+      tier = 'SR';
+    } else if (forceR){
+      tier = 'R';
+    } else if (rnd2 < pSr + 0.135){
+      tier = 'R';
+    } else {
+      tier = 'N';
+    }
+  }
+
+  if (tier === 'SSR'){
+    state.ssrPity = 0; state.srPity = 0; state.rPity = 0;
+  } else if (tier === 'SR'){
+    state.ssrPity = nextSsr; state.srPity = 0; state.rPity = 0;
+  } else if (tier === 'R'){
+    state.ssrPity = nextSsr; state.srPity = nextSr; state.rPity = 0;
+  } else {
+    state.ssrPity = nextSsr; state.srPity = nextSr; state.rPity = nextR;
+  }
+
+  const reward = pickReward(tier);
+  const record = {
+    date: today(), tier, reward, free: false,
+    ssrAfter: state.ssrPity, srAfter: state.srPity, rAfter: state.rPity,
+    number: state.draws.length + 1
+  };
+  state.draws.unshift(record);
+  return record;
+}
+
+function updateLuckClaims(){
+  // unlocking only; claiming is manual
+}
+
+function render(){
+  document.getElementById('balance').innerHTML = state.balance + '<span class="unit">抽</span>';
+  document.getElementById('luck').innerHTML = state.luck + '<span class="unit">/ 10</span>';
+  document.getElementById('ssr').innerHTML = state.ssrPity + '<span class="unit">/ 200</span>';
+  document.getElementById('freeR').innerHTML = state.freeRPlus + '<span class="unit">次</span>';
+
+  document.getElementById('rPityText').textContent = state.rPity + ' / 10';
+  document.getElementById('srPityText').textContent = state.srPity + ' / 50';
+  document.getElementById('ssrPityText').textContent = state.ssrPity + ' / 200';
+  document.getElementById('rBar').style.width = Math.min(100, state.rPity/R_PITY_MAX*100) + '%';
+  document.getElementById('srBar').style.width = Math.min(100, state.srPity/SR_PITY_MAX*100) + '%';
+  document.getElementById('ssrBar').style.width = Math.min(100, state.ssrPity/200*100) + '%';
+  document.getElementById('ssrBar2').style.width = Math.min(100, state.ssrPity/200*100) + '%';
+
+  const t = today();
+  let periodText = state.periodStart + ' 至 ' + state.periodEnd;
+  if (t > state.periodEnd) periodText += '（已过期）';
+  else if (t === state.periodEnd) periodText += ' · 今天最后一天';
+  else {
+    const remain = Math.max(0, Math.round((new Date(state.periodEnd+'T12:00:00') - new Date(t+'T12:00:00'))/86400000));
+    periodText += ' · 剩 ' + remain + ' 天';
+  }
+  document.getElementById('periodLabel').textContent = periodText;
+
+  document.getElementById('rollOne').disabled = state.balance < 1;
+  document.getElementById('rollTen').disabled = state.balance < 10;
+  document.getElementById('rollFreeR').disabled = state.freeRPlus < 1;
+  document.getElementById('drawCount').textContent = state.draws.length + ' 次';
+  document.getElementById('vibToggle').checked = !!state.settings.vibrate;
+
+  const editor = document.getElementById('rewardEditor');
+  if (editor && document.activeElement !== editor){
+    editor.value = (state.rewards||defaultRewards).map(x=>x.tier+'|'+x.name).join('\n');
+  }
+
+  document.getElementById('actionLog').innerHTML = state.actions.length
+    ? state.actions.slice(0,25).map(a=>`<div class="entry"><span>${escapeHtml(a.text)}<br><small style="color:var(--muted)">${a.date}${a.luck?' · +'+a.luck+' 幸运值':''}</small></span><b>+${a.pulls}抽</b></div>`).join('')
+    : '<p style="color:var(--muted);margin:0">还没有记录。</p>';
+
+  document.getElementById('drawLog').innerHTML = state.draws.length
+    ? state.draws.slice(0,35).map(d=>`<div class="entry"><span><b style="color:var(--${d.tier.toLowerCase()})">${d.tier}</b>${d.free?' · 免费':''} · ${escapeHtml(d.reward)}<br><small style="color:var(--muted)">${d.date} · R ${d.rAfter}/10 · SR ${d.srAfter}/50 · SSR ${d.ssrAfter}/200</small></span><span class="tag">${d.number}</span></div>`).join('')
+    : '<p style="color:var(--muted);margin:0">还没有抽取记录。</p>';
+
+  // achievements
+  const setAch = (id, unlocked, claimed, readyText, claimedText, lockedText) => {
+    const el = document.getElementById(id);
+    const st = document.getElementById(id+'Status');
+    if (unlocked){ el.classList.add('unlocked'); st.textContent = claimed ? claimedText : readyText; }
+    else { el.classList.remove('unlocked'); st.textContent = lockedText; }
+  };
+  const u3 = state.luck >= 3, u6 = state.luck >= 6, u10 = state.luck >= 10;
+  setAch('ach3', u3, state.claimed.c3, '可领取', '已领取', '未解锁');
+  setAch('ach6', u6, state.claimed.c6, '可领取', '已领取', '未解锁');
+  setAch('ach10', u10, state.claimed.c10, '可自选 SR', '已领取', '未解锁');
+
+  document.getElementById('claim3').classList.toggle('hidden', !(u3 && !state.claimed.c3));
+  document.getElementById('claim6').classList.toggle('hidden', !(u6 && !state.claimed.c6));
+  const srWrap = document.getElementById('srPickWrap');
+  if (u10 && !state.claimed.c10){
+    srWrap.classList.remove('hidden');
+    const sel = document.getElementById('srPick');
+    const srs = (state.rewards||defaultRewards).filter(x=>x.tier==='SR');
+    sel.innerHTML = srs.length ? srs.map(r=>`<option value="${escapeHtml(r.name)}">${escapeHtml(r.name)}</option>`).join('') : '<option value="">请先添加 SR 奖励</option>';
+  } else srWrap.classList.add('hidden');
+}
+
+document.getElementById('addAction').onclick = () => {
+  const text = document.getElementById('actionText').value.trim();
+  if (!text){ toast('先写下你完成了什么'); return; }
+  const pulls = Number(document.getElementById('actionTier').value);
+  const wanted = Number(document.getElementById('luckAdd').value);
+  const day = today();
+  const already = state.luckByDay[day]||0;
+  const actual = Math.min(wanted, 3-already, 10-state.luck);
+  state.balance += pulls;
+  state.luck += actual;
+  state.luckByDay[day] = already + actual;
+  state.actions.unshift({date:day, text, pulls, luck:actual});
+  document.getElementById('actionText').value='';
+  document.getElementById('luckAdd').value='0';
+  save();
+  let msg = '+'+pulls+' 抽';
+  if (actual>0) msg += ' · +'+actual+' 幸运值';
+  toast(msg);
+  vibrate(20);
+};
+
+function showResult(rec){
+  const el = document.getElementById('result');
+  el.className = 'result ' + rec.tier;
+  el.textContent = (rec.free?'免费 ':'') + rec.tier + ' · ' + rec.reward;
+  document.getElementById('orb').textContent = rec.tier;
+  if (rec.tier==='SSR') vibrate([30,40,30,40,80]);
+  else if (rec.tier==='SR') vibrate([25,30,40]);
+  else vibrate(15);
+}
+
+async function roll(n, free){
+  if (free){
+    if (state.freeRPlus < 1) return;
+    state.freeRPlus--;
+    const rec = doOne({freeRPlus:true});
+    document.getElementById('tenGrid').classList.add('hidden');
+    const orb = document.getElementById('orb');
+    orb.classList.remove('spin'); void orb.offsetWidth; orb.classList.add('spin');
+    showResult(rec); save(); return;
+  }
+  if (state.balance < n) return;
+  const results = [];
+  for (let i=0;i<n;i++){ const x=doOne(); if(x) results.push(x); }
+
+  const orb = document.getElementById('orb');
+  orb.classList.remove('spin'); void orb.offsetWidth; orb.classList.add('spin');
+
+  if (n === 1){
+    document.getElementById('tenGrid').classList.add('hidden');
+    showResult(results[0]);
+  } else {
+    // sequential reveal
+    const grid = document.getElementById('tenGrid');
+    grid.classList.remove('hidden');
+    grid.innerHTML = '';
+    document.getElementById('result').className = 'result';
+    document.getElementById('result').textContent = '揭晓中…';
+    for (let i=0;i<results.length;i++){
+      await new Promise(r=>setTimeout(r, 180));
+      const card = document.createElement('div');
+      card.className = 'ten-card ' + results[i].tier;
+      card.textContent = results[i].tier;
+      grid.appendChild(card);
+      requestAnimationFrame(()=>card.classList.add('show'));
+      if (results[i].tier==='SSR') vibrate([20,30,50]);
+      else if (results[i].tier==='SR') vibrate(20);
+    }
+    const c = {SSR:0,SR:0,R:0,N:0};
+    results.forEach(x=>c[x.tier]++);
+    document.getElementById('result').textContent = `十连：SSR ${c.SSR} · SR ${c.SR} · R ${c.R} · N ${c.N}`;
+    document.getElementById('result').className = 'result';
+    orb.textContent = results[results.length-1].tier;
+  }
+  save();
+}
+
+document.getElementById('rollOne').onclick = () => roll(1,false);
+document.getElementById('rollTen').onclick = () => roll(10,false);
+document.getElementById('rollFreeR').onclick = () => roll(1,true);
+
+document.getElementById('claim3').onclick = () => {
+  if (state.luck<3 || state.claimed.c3) return;
+  state.claimed.c3 = true; state.freeRPlus += 1; save(); toast('已获得 1 次免费 R+ 抽取'); vibrate(25);
+};
+document.getElementById('claim6').onclick = () => {
+  if (state.luck<6 || state.claimed.c6) return;
+  state.claimed.c6 = true; state.freeRPlus += 1; save(); toast('已获得 1 次免费 R+ 抽取'); vibrate(25);
+};
+document.getElementById('claim10').onclick = () => {
+  if (state.luck<10 || state.claimed.c10) return;
+  const name = document.getElementById('srPick').value;
+  if (!name){ toast('请先在奖励池添加 SR 并选择'); return; }
+  state.claimed.c10 = true;
+  state.draws.unshift({date:today(), tier:'SR', reward:name, free:true, pick:true, ssrAfter:state.ssrPity, srAfter:state.srPity, rAfter:state.rPity, number:state.draws.length+1});
+  save(); toast('已领取自选 SR：'+name); vibrate([20,30,20]);
+};
+
+document.getElementById('vibToggle').onchange = (e) => { state.settings.vibrate = e.target.checked; save(); };
+
+document.getElementById('saveRewards').onclick = () => {
+  const lines = document.getElementById('rewardEditor').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const parsed = [];
+  for (const line of lines){
+    const i = line.indexOf('|'); if (i<1) continue;
+    const tier = line.slice(0,i).trim().toUpperCase();
+    const name = line.slice(i+1).trim();
+    if (['N','R','SR','SSR'].includes(tier) && name) parsed.push({tier,name});
+  }
+  if (!parsed.length){ toast('请至少添加一条有效奖励'); return; }
+  state.rewards = parsed; save(); toast('奖励池已保存');
+};
+document.getElementById('restoreRewards').onclick = () => { state.rewards = defaultRewards.slice(); save(); toast('已恢复示例奖励池'); };
+
+document.getElementById('exportData').onclick = () => {
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='lucky_drop5_backup_'+today()+'.json'; a.click();
+};
+document.getElementById('exportCsv').onclick = () => {
+  const rows=[['序号','日期','品质','奖励','免费','R进度','SR进度','SSR进度'],...state.draws.slice().reverse().map((d,i)=>[i+1,d.date,d.tier,d.reward,d.free?'是':'否',d.rAfter,d.srAfter,d.ssrAfter])];
+  const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='lucky_drop5_draws_'+today()+'.csv'; a.click();
+};
+document.getElementById('importData').onclick = () => document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange = async e => {
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const d=JSON.parse(await f.text());
+    if(!d) throw 0;
+    state=d; if(!state.version) state.version=1;
+    if(!state.claimed) state.claimed={c3:false,c6:false,c10:false};
+    if(state.freeRPlus==null) state.freeRPlus=0;
+    if(state.rPity==null) state.rPity=0;
+    save(); toast('导入成功');
+  }catch(err){ toast('导入失败，文件格式不正确'); }
+  e.target.value='';
+};
+
+document.getElementById('settle').onclick = () => {
+  if(!confirm('确认结束本期？\n未抽数、幸运值、R/SR保底、免费次数与成就领取状态将清零。\nSSR保底与历史保留。')) return;
+  state.archives.push({start:state.periodStart,end:state.periodEnd,balance:state.balance,luck:state.luck,rPity:state.rPity,srPity:state.srPity,ssrPity:state.ssrPity,actions:state.actions,draws:state.draws,claimed:{...state.claimed},freeRPlus:state.freeRPlus});
+  state.balance=0; state.luck=0; state.luckByDay={}; state.rPity=0; state.srPity=0;
+  state.freeRPlus=0; state.actions=[]; state.draws=[]; state.claimed={c3:false,c6:false,c10:false};
+  const end=new Date(state.periodEnd+'T12:00:00'); end.setDate(end.getDate()+1);
+  const next=getMonthPeriod(formatLocal(end));
+  state.periodStart=next.periodStart; state.periodEnd=next.periodEnd;
+  save(); document.getElementById('result').textContent='新周期已开启'; toast('已结算并开启新周期');
+};
+
+document.getElementById('resetAll').onclick = () => {
+  if(!confirm('将删除全部数据（含SSR保底）。建议先导出备份。确定？')) return;
+  state=initial(); save(); document.getElementById('result').textContent='已重置'; toast('已清空');
+};
+
+render();
+if (autoSettledOnLoad) setTimeout(()=>toast('检测到已跨月，已自动结算并开启本月'), 350);
+</script>
+</body>
+</html>
